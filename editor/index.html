@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ja" data-page="editor">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>更新ツール｜ぺぇのつくったもの</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+  <link rel="stylesheet" href="editor.css">
+  <script src="../app.js" defer></script>
+  <script src="zip.js" defer></script>
+  <script src="editor.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="tool-title">ぺぇのつくったもの <span>更新ツール</span></h1>
+      <div class="toolbar" role="group" aria-label="ファイル操作">
+        <button type="button" class="btn btn-primary" id="btn-save" disabled>下書きを保存</button>
+        <button type="button" class="btn btn-accent" id="btn-export" disabled>公開用ファイルを書き出す</button>
+        <button type="button" class="btn" id="btn-import">JSONファイルを読み込む</button>
+        <button type="button" class="btn btn-ghost" id="btn-reload">公開データを読み込み直す</button>
+      </div>
+      <p class="status" id="status" role="status" aria-live="polite"></p>
+      <p class="dirty" id="dirty" hidden>保存していない変更があります</p>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main class="form-col" id="form-col">
+      <section class="notice" aria-labelledby="notice-title">
+        <h2 id="notice-title" class="sr-only">このツールについて</h2>
+        <ul>
+          <li>「下書きを保存」は、この端末のブラウザ内にだけ保存します。公開サイトはまだ変わりません。</li>
+          <li>公開サイトを変えるには「公開用ファイルを書き出す」でファイルを作り、GitHubのリポジトリに反映してコミットします（手順はREADMEにあります）。</li>
+          <li>「非表示」にした作品やリンクも、公開用のJSONファイルには残ります。非表示は秘密にする機能ではないので、秘密の情報は登録しないでください。</li>
+          <li>このツールを他の人が開いても、その人の端末内の下書きが変わるだけで、公開サイトやリポジトリは変更できません。</li>
+        </ul>
+      </section>
+
+      <div class="problems" id="problems" role="alert" hidden></div>
+
+      <div id="editor-root">
+        <p class="empty-state" id="empty-state">データを読み込んでいます…</p>
+      </div>
+    </main>
+
+    <aside class="preview-col" aria-labelledby="preview-title">
+      <div class="preview-head">
+        <h2 id="preview-title" class="preview-title">プレビュー</h2>
+        <div class="segmented" role="group" aria-label="プレビューの幅">
+          <button type="button" class="seg" data-width="mobile" aria-pressed="true">スマホ幅</button>
+          <button type="button" class="seg" data-width="pc" aria-pressed="false">PC幅</button>
+        </div>
+      </div>
+      <p class="preview-note">編集中の内容の見え方です。公開サイトはまだ変わっていません。</p>
+      <div class="preview-frame" id="preview-frame">
+        <iframe id="preview" title="サイトのプレビュー" src="../index.html?preview=1"></iframe>
+      </div>
+    </aside>
+  </div>
+
+  <input type="file" id="image-input" accept="image/png,image/jpeg,image/webp" hidden>
+  <input type="file" id="json-input" accept=".json,application/json" hidden>
+
+  <dialog id="draft-dialog" aria-labelledby="draft-dialog-title">
+    <h2 id="draft-dialog-title">端末内に下書きがあります</h2>
+    <p id="draft-dialog-text"></p>
+    <p class="dialog-note">公開データを読み込んでも、下書きは「下書きを保存」するまで消えません。</p>
+    <div class="dialog-buttons">
+      <button type="button" class="btn btn-primary" id="draft-restore">下書きを復元する</button>
+      <button type="button" class="btn" id="draft-published">最新の公開データを読み込む</button>
+    </div>
+  </dialog>
+</body>
+</html>

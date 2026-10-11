@@ -1,0 +1,120 @@
+{
+  "schemaVersion": 1,
+  "profile": {
+    "siteTitle": "ぺぇのつくったもの",
+    "displayName": "ぺぇ",
+    "bio": "ぺぇがつくったものです",
+    "image": "assets/profile.png"
+  },
+  "works": [
+    {
+      "id": "conversation-mismatch-ai",
+      "name": "会話不成立AI",
+      "description": "",
+      "type": "web",
+      "url": "https://conversation-mismatch-ai.vercel.app/",
+      "buttonLabel": "",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "kimochi-sakana-kantei",
+      "name": "きもち魚鑑定",
+      "description": "",
+      "type": "web",
+      "url": "https://kimochi-sakana-kantei.vercel.app/",
+      "buttonLabel": "",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "tiny-useless-tools",
+      "name": "役に立たないミニアプリ集",
+      "description": "",
+      "type": "web",
+      "url": "https://10-tiny-useless-tools.vercel.app/",
+      "buttonLabel": "",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "daily-profile",
+      "name": "今日のプロフィール",
+      "description": "",
+      "type": "web",
+      "url": "https://web-1-web-vite-react-typescript.vercel.app/",
+      "buttonLabel": "",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "korean-food-gacha",
+      "name": "架空韓国料理ガチャ",
+      "description": "",
+      "type": "web",
+      "url": "https://mat-ppopgi-korean-gacha.vercel.app/",
+      "buttonLabel": "",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "cactus-walk",
+      "name": "さぼてんさんぽ",
+      "description": "",
+      "type": "web",
+      "url": "https://cactus-walk.vercel.app/",
+      "buttonLabel": "",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "inaccurate-weather",
+      "name": "あたらない天気予報",
+      "description": "",
+      "type": "web",
+      "url": "https://files-mentioned-by-the-user-web-alpha.vercel.app/",
+      "buttonLabel": "",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "yondadake",
+      "name": "よんだだけ",
+      "description": "",
+      "type": "android",
+      "url": "https://github.com/petansayu/yondadake/releases",
+      "buttonLabel": "",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "penyotter",
+      "name": "ぺにょったー",
+      "description": "",
+      "type": "android",
+      "url": "https://github.com/petansayu/penyotter-releases",
+      "buttonLabel": "",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    }
+  ],
+  "links": []
+}
