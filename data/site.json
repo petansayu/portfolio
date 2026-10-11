@@ -3,90 +3,18 @@
   "profile": {
     "siteTitle": "ぺぇのつくったもの",
     "displayName": "ぺぇ",
-    "bio": "ぺぇがつくったものです",
-    "image": "assets/profile.png"
+    "bio": "こんにちは、ぺぇです",
+    "image": "assets/profile-k52xeaxctkup.jpg"
   },
   "works": [
     {
-      "id": "conversation-mismatch-ai",
-      "name": "会話不成立AI",
-      "description": "",
-      "type": "web",
-      "url": "https://conversation-mismatch-ai.vercel.app/",
+      "id": "penyotter",
+      "name": "ぺにょったー",
+      "description": "あんまり特徴のないnostrクライアント",
+      "type": "android",
+      "url": "https://github.com/petansayu/penyotter-releases",
       "buttonLabel": "",
-      "image": "",
-      "imageKind": "icon",
-      "imageAlt": "",
-      "visible": true
-    },
-    {
-      "id": "kimochi-sakana-kantei",
-      "name": "きもち魚鑑定",
-      "description": "",
-      "type": "web",
-      "url": "https://kimochi-sakana-kantei.vercel.app/",
-      "buttonLabel": "",
-      "image": "",
-      "imageKind": "icon",
-      "imageAlt": "",
-      "visible": true
-    },
-    {
-      "id": "tiny-useless-tools",
-      "name": "役に立たないミニアプリ集",
-      "description": "",
-      "type": "web",
-      "url": "https://10-tiny-useless-tools.vercel.app/",
-      "buttonLabel": "",
-      "image": "",
-      "imageKind": "icon",
-      "imageAlt": "",
-      "visible": true
-    },
-    {
-      "id": "daily-profile",
-      "name": "今日のプロフィール",
-      "description": "",
-      "type": "web",
-      "url": "https://web-1-web-vite-react-typescript.vercel.app/",
-      "buttonLabel": "",
-      "image": "",
-      "imageKind": "icon",
-      "imageAlt": "",
-      "visible": true
-    },
-    {
-      "id": "korean-food-gacha",
-      "name": "架空韓国料理ガチャ",
-      "description": "",
-      "type": "web",
-      "url": "https://mat-ppopgi-korean-gacha.vercel.app/",
-      "buttonLabel": "",
-      "image": "",
-      "imageKind": "icon",
-      "imageAlt": "",
-      "visible": true
-    },
-    {
-      "id": "cactus-walk",
-      "name": "さぼてんさんぽ",
-      "description": "",
-      "type": "web",
-      "url": "https://cactus-walk.vercel.app/",
-      "buttonLabel": "",
-      "image": "",
-      "imageKind": "icon",
-      "imageAlt": "",
-      "visible": true
-    },
-    {
-      "id": "inaccurate-weather",
-      "name": "あたらない天気予報",
-      "description": "",
-      "type": "web",
-      "url": "https://files-mentioned-by-the-user-web-alpha.vercel.app/",
-      "buttonLabel": "",
-      "image": "",
+      "image": "assets/works/lntom7lk2tw4.png",
       "imageKind": "icon",
       "imageAlt": "",
       "visible": true
@@ -94,27 +22,149 @@
     {
       "id": "yondadake",
       "name": "よんだだけ",
-      "description": "",
+      "description": "一日一回通知で声をかけてくる謎の生物です。",
       "type": "android",
       "url": "https://github.com/petansayu/yondadake/releases",
       "buttonLabel": "",
-      "image": "",
+      "image": "assets/works/5ax5q7kco8j2.png",
       "imageKind": "icon",
       "imageAlt": "",
       "visible": true
     },
     {
-      "id": "penyotter",
-      "name": "ぺにょったー",
-      "description": "",
-      "type": "android",
-      "url": "https://github.com/petansayu/penyotter-releases",
+      "id": "kimochi-sakana-kantei",
+      "name": "きもち魚鑑定",
+      "description": "その時の気持ちを魚にします",
+      "type": "web",
+      "url": "https://kimochi-sakana-kantei.vercel.app/",
       "buttonLabel": "",
-      "image": "",
+      "image": "assets/works/jyqcvyrhupxz.png",
+      "imageKind": "screenshot",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "conversation-mismatch-ai",
+      "name": "会話不成立AI",
+      "description": "１日３往復の会話にならない会話ができます",
+      "type": "web",
+      "url": "https://conversation-mismatch-ai.vercel.app/",
+      "buttonLabel": "",
+      "image": "assets/works/4p3nr3z1m8xv.png",
+      "imageKind": "screenshot",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "tiny-useless-tools",
+      "name": "役に立たないミニアプリ集",
+      "description": "１０個あります",
+      "type": "web",
+      "url": "https://10-tiny-useless-tools.vercel.app/",
+      "buttonLabel": "",
+      "image": "assets/works/aodbm37ymne9.png",
+      "imageKind": "screenshot",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "daily-profile",
+      "name": "今日のプロフィール",
+      "description": "今日のあなたのプロフィールです",
+      "type": "web",
+      "url": "https://web-1-web-vite-react-typescript.vercel.app/",
+      "buttonLabel": "",
+      "image": "assets/works/bil3hbxb3lfn.png",
       "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "korean-food-gacha",
+      "name": "架空韓国料理ガチャ",
+      "description": "架空の韓国料理を作ります",
+      "type": "web",
+      "url": "https://mat-ppopgi-korean-gacha.vercel.app/",
+      "buttonLabel": "",
+      "image": "assets/works/6tmjwdlbc1k5.png",
+      "imageKind": "screenshot",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "cactus-walk",
+      "name": "さぼてんさんぽ",
+      "description": "さぼてんが歩きます",
+      "type": "web",
+      "url": "https://cactus-walk.vercel.app/",
+      "buttonLabel": "",
+      "image": "assets/works/hfzppqnthbwk.png",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "inaccurate-weather",
+      "name": "あたらない天気予報",
+      "description": "ぜんぶが雰囲気の天気予報です",
+      "type": "web",
+      "url": "https://files-mentioned-by-the-user-web-alpha.vercel.app/",
+      "buttonLabel": "",
+      "image": "assets/works/jgyjfwo2rmlw.png",
+      "imageKind": "screenshot",
       "imageAlt": "",
       "visible": true
     }
   ],
-  "links": []
+  "links": [
+    {
+      "id": "link-54a7dp6g",
+      "label": "Nostr",
+      "url": "https://nosta.me/npub1ddhpnnj84ytuhcf6vlhtgpf6nvcpu78vny2p8e64f9fs3rkk95ashxgr8s",
+      "icon": "nostr",
+      "visible": true
+    },
+    {
+      "id": "link-8onpyuwc",
+      "label": "Bluesky",
+      "url": "https://bsky.app/profile/petan.bsky.social",
+      "icon": "bluesky",
+      "visible": true
+    },
+    {
+      "id": "link-6q0xnk96",
+      "label": "mixi2",
+      "url": "https://mixi.social/@petan",
+      "icon": "",
+      "visible": true
+    },
+    {
+      "id": "link-cc8jra8b",
+      "label": "YouTube",
+      "url": "https://www.youtube.com/@petan_petan",
+      "icon": "youtube",
+      "visible": true
+    },
+    {
+      "id": "link-nol2nlji",
+      "label": "GitHub",
+      "url": "https://github.com/petansayu",
+      "icon": "github",
+      "visible": true
+    },
+    {
+      "id": "link-gndsbkth",
+      "label": "Instagram",
+      "url": "https://www.instagram.com/petan_sayu/",
+      "icon": "instagram",
+      "visible": true
+    },
+    {
+      "id": "link-do26nsj6",
+      "label": "干し芋のリスト",
+      "url": "https://www.amazon.co.jp/hz/wishlist/ls/1875SAEQEDS1O?ref_=wl_share",
+      "icon": "",
+      "visible": true
+    }
+  ]
 }
