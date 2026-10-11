@@ -3,7 +3,7 @@
   "profile": {
     "siteTitle": "ぺぇのつくったもの",
     "displayName": "ぺぇ",
-    "bio": "こんにちは、ぺぇです",
+    "bio": "こんにちは、ぺぇです\nよくわからない思い付きをを、AIと一緒に形にしています",
     "image": "assets/profile-k52xeaxctkup.jpg"
   },
   "categories": [
@@ -98,6 +98,18 @@
       "visible": true
     },
     {
+      "id": "work-9dwm2ymy",
+      "name": "応援しないカレンダー",
+      "description": "予定を応援しません",
+      "category": "web",
+      "url": "https://unsupportive-calendar-4zc838uqd-petansayus-projects.vercel.app/add",
+      "buttonLabel": "",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
       "id": "daily-profile",
       "name": "今日のプロフィール",
       "description": "今日のあなたのプロフィールです",
@@ -177,7 +189,7 @@
       "url": "https://petan-shop.booth.pm/",
       "buttonLabel": "",
       "image": "assets/works/6iyh31lcd5nd.png",
-      "imageKind": "screenshot",
+      "imageKind": "icon",
       "imageAlt": "",
       "visible": true
     },
