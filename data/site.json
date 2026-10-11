@@ -8,17 +8,17 @@
   },
   "categories": [
     {
-      "id": "web",
-      "label": "Webアプリ",
-      "badge": "Web",
-      "buttonLabel": "使ってみる",
-      "visible": true
-    },
-    {
       "id": "android",
       "label": "Androidアプリ",
       "badge": "Android",
       "buttonLabel": "配布ページへ",
+      "visible": true
+    },
+    {
+      "id": "web",
+      "label": "Webアプリ",
+      "badge": "Web",
+      "buttonLabel": "使ってみる",
       "visible": true
     },
     {
@@ -142,6 +142,54 @@
       "buttonLabel": "",
       "image": "assets/works/jgyjfwo2rmlw.png",
       "imageKind": "screenshot",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "work-asrsmt9i",
+      "name": "ぺぇ生誕祭会場2026",
+      "description": "みんなにお祝いしてもらいました。ありがとう。",
+      "category": "birthday",
+      "url": "https://pee-birthday-app.vercel.app/",
+      "buttonLabel": "祝いの名残を見る",
+      "image": "",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "work-6hl1ed9q",
+      "name": "SUZURI",
+      "description": "グッズがあります",
+      "category": "goods",
+      "url": "https://suzuri.jp/sayu_petan",
+      "buttonLabel": "",
+      "image": "assets/works/886x7coprj0m.png",
+      "imageKind": "icon",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "work-w22cn29y",
+      "name": "BOOTH",
+      "description": "グッズがあります",
+      "category": "goods",
+      "url": "https://petan-shop.booth.pm/",
+      "buttonLabel": "",
+      "image": "assets/works/6iyh31lcd5nd.png",
+      "imageKind": "screenshot",
+      "imageAlt": "",
+      "visible": true
+    },
+    {
+      "id": "work-1ri7qznz",
+      "name": "LINEスタンプ",
+      "description": "",
+      "category": "goods",
+      "url": "https://store.line.me/stickershop/author/4285021/ja",
+      "buttonLabel": "",
+      "image": "assets/works/guxm4azxfvso.png",
+      "imageKind": "icon",
       "imageAlt": "",
       "visible": true
     }
