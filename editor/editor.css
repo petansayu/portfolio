@@ -515,9 +515,20 @@ textarea.input {
   color: var(--sky-ink);
 }
 
-.tag-android {
+/* ジャンルの色（公開ページの .badge-c0〜c3 と同じ並び） */
+.tag-c1 {
   background: var(--pink-soft);
   color: var(--pink-ink);
+}
+
+.tag-c2 {
+  background: #dff3ea;
+  color: #1d6447;
+}
+
+.tag-c3 {
+  background: #ece7fa;
+  color: #573e9a;
 }
 
 .tag-icon {

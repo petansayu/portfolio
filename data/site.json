@@ -1,17 +1,47 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "profile": {
     "siteTitle": "ぺぇのつくったもの",
     "displayName": "ぺぇ",
     "bio": "こんにちは、ぺぇです",
     "image": "assets/profile-k52xeaxctkup.jpg"
   },
+  "categories": [
+    {
+      "id": "web",
+      "label": "Webアプリ",
+      "badge": "Web",
+      "buttonLabel": "使ってみる",
+      "visible": true
+    },
+    {
+      "id": "android",
+      "label": "Androidアプリ",
+      "badge": "Android",
+      "buttonLabel": "配布ページへ",
+      "visible": true
+    },
+    {
+      "id": "birthday",
+      "label": "おたんじょうびお祝い場",
+      "badge": "",
+      "buttonLabel": "",
+      "visible": true
+    },
+    {
+      "id": "goods",
+      "label": "グッズ",
+      "badge": "",
+      "buttonLabel": "",
+      "visible": true
+    }
+  ],
   "works": [
     {
       "id": "penyotter",
       "name": "ぺにょったー",
       "description": "あんまり特徴のないnostrクライアント",
-      "type": "android",
+      "category": "android",
       "url": "https://github.com/petansayu/penyotter-releases",
       "buttonLabel": "",
       "image": "assets/works/lntom7lk2tw4.png",
@@ -23,7 +53,7 @@
       "id": "yondadake",
       "name": "よんだだけ",
       "description": "一日一回通知で声をかけてくる謎の生物です。",
-      "type": "android",
+      "category": "android",
       "url": "https://github.com/petansayu/yondadake/releases",
       "buttonLabel": "",
       "image": "assets/works/5ax5q7kco8j2.png",
@@ -35,7 +65,7 @@
       "id": "kimochi-sakana-kantei",
       "name": "きもち魚鑑定",
       "description": "その時の気持ちを魚にします",
-      "type": "web",
+      "category": "web",
       "url": "https://kimochi-sakana-kantei.vercel.app/",
       "buttonLabel": "",
       "image": "assets/works/jyqcvyrhupxz.png",
@@ -47,7 +77,7 @@
       "id": "conversation-mismatch-ai",
       "name": "会話不成立AI",
       "description": "１日３往復の会話にならない会話ができます",
-      "type": "web",
+      "category": "web",
       "url": "https://conversation-mismatch-ai.vercel.app/",
       "buttonLabel": "",
       "image": "assets/works/4p3nr3z1m8xv.png",
@@ -59,7 +89,7 @@
       "id": "tiny-useless-tools",
       "name": "役に立たないミニアプリ集",
       "description": "１０個あります",
-      "type": "web",
+      "category": "web",
       "url": "https://10-tiny-useless-tools.vercel.app/",
       "buttonLabel": "",
       "image": "assets/works/aodbm37ymne9.png",
@@ -71,7 +101,7 @@
       "id": "daily-profile",
       "name": "今日のプロフィール",
       "description": "今日のあなたのプロフィールです",
-      "type": "web",
+      "category": "web",
       "url": "https://web-1-web-vite-react-typescript.vercel.app/",
       "buttonLabel": "",
       "image": "assets/works/bil3hbxb3lfn.png",
@@ -83,7 +113,7 @@
       "id": "korean-food-gacha",
       "name": "架空韓国料理ガチャ",
       "description": "架空の韓国料理を作ります",
-      "type": "web",
+      "category": "web",
       "url": "https://mat-ppopgi-korean-gacha.vercel.app/",
       "buttonLabel": "",
       "image": "assets/works/6tmjwdlbc1k5.png",
@@ -95,7 +125,7 @@
       "id": "cactus-walk",
       "name": "さぼてんさんぽ",
       "description": "さぼてんが歩きます",
-      "type": "web",
+      "category": "web",
       "url": "https://cactus-walk.vercel.app/",
       "buttonLabel": "",
       "image": "assets/works/hfzppqnthbwk.png",
@@ -107,7 +137,7 @@
       "id": "inaccurate-weather",
       "name": "あたらない天気予報",
       "description": "ぜんぶが雰囲気の天気予報です",
-      "type": "web",
+      "category": "web",
       "url": "https://files-mentioned-by-the-user-web-alpha.vercel.app/",
       "buttonLabel": "",
       "image": "assets/works/jgyjfwo2rmlw.png",

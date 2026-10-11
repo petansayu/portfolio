@@ -5,12 +5,15 @@
 (function () {
   'use strict';
 
-  var SCHEMA_VERSION = 1;
-  var WORK_TYPES = ['web', 'android'];
+  var SCHEMA_VERSION = 2;
   var IMAGE_KINDS = ['icon', 'screenshot'];
-  var TYPE_LABELS = { web: 'Web', android: 'Android' };
-  var SECTION_TITLES = { web: 'Webアプリ', android: 'Androidアプリ' };
-  var DEFAULT_BUTTON_LABELS = { web: '使ってみる', android: '配布ページへ' };
+  var FALLBACK_BUTTON_LABEL = '開く';
+  // schemaVersion 1 の type（web/android）を変換するときのジャンル
+  var LEGACY_CATEGORIES = [
+    { id: 'web', label: 'Webアプリ', badge: 'Web', buttonLabel: '使ってみる', visible: true },
+    { id: 'android', label: 'Androidアプリ', badge: 'Android', buttonLabel: '配布ページへ', visible: true }
+  ];
+  var BADGE_COLORS = 4;
   var ID_PATTERN = /^[a-z0-9][a-z0-9-]{0,63}$/;
   // 画像は assets/ 配下の相対パスのみ（../ や絶対URLは不可）
   var IMAGE_PATH_PATTERN = /^assets\/(?:[A-Za-z0-9_-]+\/)*[A-Za-z0-9_-]+\.(?:png|jpe?g|webp)$/i;
@@ -48,8 +51,55 @@
     return typeof value === 'string' && IMAGE_PATH_PATTERN.test(value);
   }
 
-  function defaultButtonLabel(type) {
-    return DEFAULT_BUTTON_LABELS[type] || '開く';
+  // 作品ごとの文言が空のときに使う、ジャンルの既定のボタン文言
+  function defaultButtonLabel(category) {
+    var label = category && typeof category.buttonLabel === 'string' ? category.buttonLabel.trim() : '';
+    return label || FALLBACK_BUTTON_LABEL;
+  }
+
+  function findCategory(data, id) {
+    var list = data && Array.isArray(data.categories) ? data.categories : [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && list[i].id === id) return list[i];
+    }
+    return null;
+  }
+
+  function badgeColorIndex(data, id) {
+    var list = data && Array.isArray(data.categories) ? data.categories : [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && list[i].id === id) return i % BADGE_COLORS;
+    }
+    return 0;
+  }
+
+  /*
+   * 古い形式のデータを現在の形式に変換する（元のデータは変更しない）。
+   * schemaVersion 1 → 2: works[].type（web/android）を categories と works[].category に置き換える。
+   * 変換できない形のデータはそのまま返し、validateSite で案内する。
+   */
+  function migrate(data) {
+    if (!data || typeof data !== 'object' || data.schemaVersion !== 1 || !Array.isArray(data.works)) return data;
+    var out = JSON.parse(JSON.stringify(data));
+    out.schemaVersion = 2;
+    var categories = JSON.parse(JSON.stringify(LEGACY_CATEGORIES));
+    out.works = out.works.map(function (w) {
+      if (!w || typeof w !== 'object' || Array.isArray(w)) return w;
+      var converted = {};
+      Object.keys(w).forEach(function (k) {
+        if (k === 'type') converted.category = w.type;
+        else converted[k] = w[k];
+      });
+      return converted;
+    });
+    // プロフィールの次にジャンルを置く（キーの並びを読みやすくするため）
+    return {
+      schemaVersion: out.schemaVersion,
+      profile: out.profile,
+      categories: categories,
+      works: out.works,
+      links: out.links
+    };
   }
 
   function generateId(prefix, existing) {
@@ -65,12 +115,22 @@
     }
   }
 
-  function newWork(existingIds) {
+  function newCategory(existingIds) {
+    return {
+      id: generateId('cat', existingIds),
+      label: '',
+      badge: '',
+      buttonLabel: '',
+      visible: true
+    };
+  }
+
+  function newWork(existingIds, categoryId) {
     return {
       id: generateId('work', existingIds),
       name: '',
       description: '',
-      type: 'web',
+      category: categoryId || '',
       url: '',
       buttonLabel: '',
       image: '',
@@ -140,8 +200,36 @@
     }
     if (data.schemaVersion !== SCHEMA_VERSION) {
       add('schemaVersion', 'schemaVersion',
-        data.schemaVersion === undefined ? '項目がありません' : '未対応のバージョンです（' + String(data.schemaVersion) + '）。対応しているのは ' + SCHEMA_VERSION + ' です');
+        data.schemaVersion === undefined ? '項目がありません' : '未対応のバージョンです（' + String(data.schemaVersion) + '）。対応しているのは 1〜' + SCHEMA_VERSION + ' です');
       return errors;
+    }
+
+    // ジャンル
+    var categoryIds = {};
+    if (!Array.isArray(data.categories)) {
+      add('categories', 'ジャンル一覧', data.categories === undefined ? '項目がありません' : '配列である必要があります');
+    } else {
+      data.categories.forEach(function (c, i) {
+        var label = 'ジャンル' + (i + 1) + (isObj(c) && typeof c.label === 'string' && c.label.trim() ? '「' + c.label.trim() + '」' : '');
+        if (!isObj(c)) {
+          add('categories.#' + i, label, '形式が正しくありません');
+          return;
+        }
+        var k = 'categories.' + (typeof c.id === 'string' ? c.id : '#' + i) + '.';
+        if (typeof c.id !== 'string' || !ID_PATTERN.test(c.id)) {
+          add(k + 'id', label + 'のID', '英小文字・数字・ハイフンのIDが必要です');
+        } else if (categoryIds[c.id]) {
+          add(k + 'id', label + 'のID', 'ID「' + c.id + '」が重複しています');
+        } else {
+          categoryIds[c.id] = true;
+        }
+        if (checkString(c, 'label', k + 'label', label + 'の見出し') && publish && c.label.trim() === '') {
+          add(k + 'label', label + 'の見出し', '入力してください');
+        }
+        checkString(c, 'badge', k + 'badge', label + 'の短い表示');
+        checkString(c, 'buttonLabel', k + 'buttonLabel', label + 'のボタン文言');
+        checkBool(c, 'visible', k + 'visible', label + 'の公開設定');
+      });
     }
 
     // プロフィール
@@ -182,7 +270,11 @@
           add(k + 'name', label + 'の作品名', '入力してください');
         }
         checkString(w, 'description', k + 'description', label + 'の説明');
-        if (WORK_TYPES.indexOf(w.type) === -1) add(k + 'type', label + 'の種別', 'web か android である必要があります');
+        if (typeof w.category !== 'string' || w.category === '') {
+          add(k + 'category', label + 'のジャンル', 'ジャンルを選んでください');
+        } else if (Array.isArray(data.categories) && !categoryIds[w.category]) {
+          add(k + 'category', label + 'のジャンル', 'ジャンル「' + w.category + '」が見つかりません');
+        }
         var visibleOk = checkBool(w, 'visible', k + 'visible', label + 'の公開設定');
         checkUrl(w, k + 'url', label + 'のURL', publish && visibleOk && w.visible);
         checkString(w, 'buttonLabel', k + 'buttonLabel', label + 'のボタン文言');
@@ -268,7 +360,7 @@
     return item && item.visible === true && isSafeUrl(item.url);
   }
 
-  function renderWorkCard(work, resolveImage) {
+  function renderWorkCard(work, category, colorIndex, resolveImage) {
     var card = el('article', 'card');
     var name = (work.name || '').trim();
     var hasImage = isImagePath(work.image);
@@ -295,7 +387,8 @@
     if (!isShot) head.appendChild(hasImage ? makeImg('media-icon') : placeholder('media-icon'));
     var titles = el('div', 'card-titles');
     titles.appendChild(el('h3', 'card-title', name));
-    titles.appendChild(el('span', 'badge badge-' + work.type, TYPE_LABELS[work.type] || work.type));
+    var badge = (category.badge || '').trim();
+    if (badge) titles.appendChild(el('span', 'badge badge-c' + colorIndex, badge));
     head.appendChild(titles);
     card.appendChild(head);
 
@@ -303,7 +396,7 @@
     if (desc) card.appendChild(el('p', 'card-desc', desc));
 
     var btn = externalLink(work.url.trim(), 'btn');
-    btn.appendChild(el('span', null, (work.buttonLabel || '').trim() || defaultButtonLabel(work.type)));
+    btn.appendChild(el('span', null, (work.buttonLabel || '').trim() || defaultButtonLabel(category)));
     appendNewTabHint(btn);
     var foot = el('div', 'card-foot');
     foot.appendChild(btn);
@@ -345,18 +438,22 @@
 
     var main = el('main', 'content');
     var works = Array.isArray(data.works) ? data.works : [];
-    WORK_TYPES.forEach(function (type) {
+    var categories = Array.isArray(data.categories) ? data.categories : [];
+    // ジャンルの並び順で、公開する作品があるジャンルだけを表示する
+    categories.forEach(function (cat, index) {
+      if (!cat || cat.visible !== true || typeof cat.label !== 'string' || !cat.label.trim()) return;
       var list = works.filter(function (w) {
-        return w && w.type === type && isPublic(w) && typeof w.name === 'string' && w.name.trim();
+        return w && w.category === cat.id && isPublic(w) && typeof w.name === 'string' && w.name.trim();
       });
       if (!list.length) return;
-      var section = el('section', 'section section-' + type);
-      section.setAttribute('aria-labelledby', 'sec-' + type);
-      var h2 = el('h2', 'section-title', SECTION_TITLES[type]);
-      h2.id = 'sec-' + type;
+      var colorIndex = index % BADGE_COLORS;
+      var section = el('section', 'section section-category');
+      section.setAttribute('aria-labelledby', 'sec-cat-' + cat.id);
+      var h2 = el('h2', 'section-title', cat.label.trim());
+      h2.id = 'sec-cat-' + cat.id;
       section.appendChild(h2);
       var grid = el('div', 'grid');
-      list.forEach(function (w) { grid.appendChild(renderWorkCard(w, resolveImage)); });
+      list.forEach(function (w) { grid.appendChild(renderWorkCard(w, cat, colorIndex, resolveImage)); });
       section.appendChild(grid);
       main.appendChild(section);
     });
@@ -430,7 +527,8 @@
         if (!res.ok) throw new Error('HTTP ' + res.status);
         return res.json();
       })
-      .then(function (data) {
+      .then(function (raw) {
+        var data = migrate(raw);
         var errors = validateSite(data, 'structure');
         if (errors.length && (errors[0].key === 'root' || errors[0].key === 'schemaVersion')) {
           throw new Error(errors[0].field + ': ' + errors[0].message);
@@ -444,13 +542,16 @@
 
   window.PeeSite = {
     SCHEMA_VERSION: SCHEMA_VERSION,
-    WORK_TYPES: WORK_TYPES,
-    TYPE_LABELS: TYPE_LABELS,
+    BADGE_COLORS: BADGE_COLORS,
     ICONS: ICONS,
     isSafeUrl: isSafeUrl,
     isImagePath: isImagePath,
     defaultButtonLabel: defaultButtonLabel,
+    findCategory: findCategory,
+    badgeColorIndex: badgeColorIndex,
+    migrate: migrate,
     generateId: generateId,
+    newCategory: newCategory,
     newWork: newWork,
     newLink: newLink,
     validateSite: validateSite,

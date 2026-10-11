@@ -287,14 +287,25 @@ img {
   letter-spacing: 0.03em;
 }
 
-.badge-web {
+/* ジャンルの並び順で4色を順に使う */
+.badge-c0 {
   background: var(--sky-soft);
   color: var(--sky-ink);
 }
 
-.badge-android {
+.badge-c1 {
   background: var(--pink-soft);
   color: var(--pink-ink);
+}
+
+.badge-c2 {
+  background: #dff3ea;
+  color: #1d6447;
+}
+
+.badge-c3 {
+  background: #ece7fa;
+  color: #573e9a;
 }
 
 /* ---------- ボタン・リンク ---------- */

@@ -337,7 +337,8 @@
   }
 
   async function restoreDraft(draft) {
-    var errors = S.validateSite(draft.data, 'structure');
+    var data = S.migrate(draft.data);
+    var errors = S.validateSite(data, 'structure');
     if (errors.length) {
       showProblems('下書きの内容に問題があるため、復元できませんでした。公開データを読み込みます。', errors);
       return loadPublished();
@@ -355,7 +356,7 @@
         missing++;
       }
     }
-    setData(draft.data);
+    setData(data);
     setDirty(false);
     if (missing) {
       setStatus('下書きを復元しましたが、画像' + missing + '件のデータが見つかりませんでした。該当する画像を選び直してください。', 'error');
@@ -378,7 +379,7 @@
       var res = await fetch('../data/site.json', { cache: 'no-cache' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       var text = await res.text();
-      var data = JSON.parse(text);
+      var data = S.migrate(JSON.parse(text));
       var errors = S.validateSite(data, 'structure');
       if (errors.length) {
         showProblems('公開データ（data/site.json）に問題があります。', errors);
@@ -406,7 +407,7 @@
     }
     var data;
     try {
-      data = JSON.parse(text);
+      data = S.migrate(JSON.parse(text));
     } catch (e) {
       showProblems('JSONとして読み込めませんでした。現在の編集内容はそのままです。', [{ field: file.name, message: '不正なJSONです（' + e.message + '）' }]);
       setStatus('JSONファイルを読み込めませんでした。', 'error');
@@ -436,6 +437,9 @@
     p.siteTitle = p.siteTitle.trim();
     p.displayName = p.displayName.trim();
     p.bio = p.bio.trim();
+    d.categories.forEach(function (c) {
+      ['label', 'badge', 'buttonLabel'].forEach(function (k) { c[k] = c[k].trim(); });
+    });
     d.works.forEach(function (w) {
       ['name', 'url', 'buttonLabel', 'imageAlt'].forEach(function (k) { w[k] = w[k].trim(); });
       w.description = w.description.trim();
@@ -447,8 +451,11 @@
     return {
       schemaVersion: d.schemaVersion,
       profile: { siteTitle: p.siteTitle, displayName: p.displayName, bio: p.bio, image: p.image },
+      categories: d.categories.map(function (c) {
+        return { id: c.id, label: c.label, badge: c.badge, buttonLabel: c.buttonLabel, visible: c.visible };
+      }),
       works: d.works.map(function (w) {
-        return { id: w.id, name: w.name, description: w.description, type: w.type, url: w.url, buttonLabel: w.buttonLabel, image: w.image, imageKind: w.imageKind, imageAlt: w.imageAlt, visible: w.visible };
+        return { id: w.id, name: w.name, description: w.description, category: w.category, url: w.url, buttonLabel: w.buttonLabel, image: w.image, imageKind: w.imageKind, imageAlt: w.imageAlt, visible: w.visible };
       }),
       links: d.links.map(function (l) {
         return { id: l.id, label: l.label, url: l.url, icon: l.icon, visible: l.visible };
@@ -772,6 +779,7 @@
     var root = $('editor-root');
     root.textContent = '';
     root.appendChild(renderProfileSection());
+    root.appendChild(renderListSection('categories'));
     root.appendChild(renderListSection('works'));
     root.appendChild(renderListSection('links'));
     refreshValidation();
@@ -798,16 +806,48 @@
     return sec;
   }
 
+  function worksInCategory(categoryId) {
+    return state.data.works.filter(function (w) { return w.category === categoryId; }).length;
+  }
+
   var LIST_CONFIG = {
+    categories: {
+      title: 'ジャンル',
+      note: 'ジャンルの並び順が、公開ページでの見出しの順番になります。公開する作品がないジャンルは表示されません。',
+      addLabel: 'ジャンルを追加',
+      noun: 'ジャンル',
+      unnamed: '（見出し未入力）',
+      empty: 'ジャンルがありません。作品を登録するには、先にジャンルを追加してください。',
+      create: function (ids) { return S.newCategory(ids); },
+      name: function (c) { return c.label.trim(); },
+      tags: function (c) {
+        var tags = [];
+        if (c.badge.trim()) tags.push({ text: c.badge.trim(), cls: 'tag-c' + S.badgeColorIndex(state.data, c.id) });
+        tags.push({ text: '作品' + worksInCategory(c.id) + '件', cls: 'tag-icon' });
+        return tags;
+      },
+      canDelete: function (c) {
+        var n = worksInCategory(c.id);
+        return n ? 'このジャンルには作品が' + n + '件あります。先に、それらの作品のジャンルを変えるか、作品を削除してください。' : null;
+      },
+      renderFields: renderCategoryFields
+    },
     works: {
       title: '作品',
       addLabel: '作品を追加',
       noun: '作品',
       unnamed: '（作品名未入力）',
       empty: 'まだ作品がありません。',
-      create: function (ids) { return S.newWork(ids); },
+      create: function (ids) {
+        var first = state.data.categories[0];
+        return S.newWork(ids, first ? first.id : '');
+      },
       name: function (w) { return w.name.trim(); },
-      tags: function (w) { return [{ text: S.TYPE_LABELS[w.type] || w.type, cls: 'tag-' + w.type }]; },
+      tags: function (w) {
+        var c = S.findCategory(state.data, w.category);
+        if (!c) return [{ text: 'ジャンル未設定', cls: 'tag-warn' }];
+        return [{ text: c.badge.trim() || c.label.trim() || '（見出し未入力）', cls: 'tag-c' + S.badgeColorIndex(state.data, c.id) }];
+      },
       renderFields: renderWorkFields
     },
     links: {
@@ -834,7 +874,7 @@
     var title = h('h2', 'panel-title', cfg.title);
     title.id = 'sec-' + listKey;
     sec.appendChild(title);
-    sec.appendChild(h('p', 'panel-note', '並び順がそのまま公開ページの表示順になります。「非表示」にした項目も公開用ファイルには残ります。'));
+    sec.appendChild(h('p', 'panel-note', cfg.note || '並び順がそのまま公開ページの表示順になります。「非表示」にした項目も公開用ファイルには残ります。'));
 
     var items = state.data[listKey];
     if (!items.length) sec.appendChild(h('p', 'empty-state', cfg.empty));
@@ -969,6 +1009,12 @@
 
     del.addEventListener('click', function () {
       var shown = cfg.name(item) || cfg.unnamed;
+      var blocked = cfg.canDelete && cfg.canDelete(item);
+      if (blocked) {
+        alert(blocked);
+        setStatus('「' + shown + '」は削除しませんでした。' + blocked, 'error');
+        return;
+      }
       var extra = listKey === 'works' ? '\n（画像ファイルはリポジトリから削除されません）' : '';
       if (!confirm('「' + shown + '」を削除しますか？' + extra)) return;
       var list = state.data[listKey];
@@ -1002,20 +1048,16 @@
       input: textInput(w, 'name', base + 'name', { onInput: refreshHeads, lazyTouch: true })
     }));
 
-    var typeSelect = h('select', 'input');
-    S.WORK_TYPES.forEach(function (t) {
-      var o = h('option', null, S.TYPE_LABELS[t]);
-      o.value = t;
-      typeSelect.appendChild(o);
+    var categorySelect = h('select', 'input');
+    categorySelect.addEventListener('change', function () {
+      w.category = categorySelect.value;
+      changed(base + 'category');
     });
-    typeSelect.value = w.type;
-    typeSelect.addEventListener('change', function () {
-      w.type = typeSelect.value;
-      labelInput.placeholder = S.defaultButtonLabel(w.type);
-      labelHint.textContent = '空欄なら「' + S.defaultButtonLabel(w.type) + '」と表示します。';
-      changed(base + 'type');
-    });
-    body.appendChild(makeField({ key: base + 'type', label: '種別', itemId: id, input: typeSelect }));
+    body.appendChild(makeField({
+      key: base + 'category', label: 'ジャンル', required: true, itemId: id,
+      hint: 'ジャンルは「ジャンル」の欄で追加・名前の変更・並べ替えができます。',
+      input: categorySelect
+    }));
 
     body.appendChild(makeField({
       key: base + 'url', label: 'リンク先URL', itemId: id,
@@ -1029,14 +1071,42 @@
       input: textInput(w, 'description', base + 'description', { multiline: true })
     }));
 
-    labelInput = textInput(w, 'buttonLabel', base + 'buttonLabel', { placeholder: S.defaultButtonLabel(w.type) });
+    labelInput = textInput(w, 'buttonLabel', base + 'buttonLabel');
     var labelField = makeField({
       key: base + 'buttonLabel', label: 'ボタンの文言（任意）', itemId: id,
-      hint: '空欄なら「' + S.defaultButtonLabel(w.type) + '」と表示します。',
+      hint: ' ',
       input: labelInput
     });
     var labelHint = labelField.querySelector('.hint');
     body.appendChild(labelField);
+
+    // ジャンルの追加・名前変更・並べ替えに合わせて、選択肢と既定のボタン文言を更新する
+    var lastSignature = null;
+    function syncCategory() {
+      var cats = state.data.categories;
+      var signature = JSON.stringify(cats.map(function (c) { return [c.id, c.label]; }));
+      if (signature !== lastSignature) {
+        lastSignature = signature;
+        categorySelect.textContent = '';
+        if (!S.findCategory(state.data, w.category)) {
+          var none = h('option', null, '（選んでください）');
+          none.value = '';
+          categorySelect.appendChild(none);
+        }
+        cats.forEach(function (c) {
+          var o = h('option', null, c.label.trim() || '（見出し未入力）');
+          o.value = c.id;
+          categorySelect.appendChild(o);
+        });
+        categorySelect.value = S.findCategory(state.data, w.category) ? w.category : '';
+      }
+      var fallback = S.defaultButtonLabel(S.findCategory(state.data, w.category));
+      labelInput.placeholder = fallback;
+      labelHint.textContent = '空欄なら「' + fallback + '」と表示します（ジャンルの設定）。';
+    }
+    syncCategory.node = body;
+    headUpdaters.push(syncCategory);
+    syncCategory();
 
     body.appendChild(imageField({
       key: base + 'image',
@@ -1080,6 +1150,27 @@
     }));
 
     body.appendChild(checkbox(w, 'visible', base + 'visible', '公開ページに表示する', null, id));
+  }
+
+  function renderCategoryFields(c, body) {
+    var base = 'categories.' + c.id + '.';
+    var id = c.id;
+    body.appendChild(makeField({
+      key: base + 'label', label: '見出し', required: true, itemId: id,
+      hint: '公開ページのセクションの見出しです（例：Webアプリ、グッズ）。',
+      input: textInput(c, 'label', base + 'label', { onInput: refreshHeads, lazyTouch: true })
+    }));
+    body.appendChild(makeField({
+      key: base + 'badge', label: '作品カードの小さな表示（任意）', itemId: id,
+      hint: '作品カードの名前の下に出る短い文字です（例：Web）。空欄なら表示しません。',
+      input: textInput(c, 'badge', base + 'badge', { onInput: refreshHeads })
+    }));
+    body.appendChild(makeField({
+      key: base + 'buttonLabel', label: 'ボタンの既定の文言（任意）', itemId: id,
+      hint: '作品ごとのボタンの文言が空欄のときに使います。空欄なら「' + S.defaultButtonLabel(null) + '」と表示します。',
+      input: textInput(c, 'buttonLabel', base + 'buttonLabel', { placeholder: S.defaultButtonLabel(null) })
+    }));
+    body.appendChild(checkbox(c, 'visible', base + 'visible', '公開ページに表示する', null, id));
   }
 
   function renderLinkFields(l, body) {
